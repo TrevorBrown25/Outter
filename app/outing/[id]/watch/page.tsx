@@ -2,6 +2,7 @@
 import { use, useEffect, useState } from 'react'
 import { supabase, ensureSession } from '@/src/lib/supabase'
 import type { Group, Outing, Player } from '@/src/lib/types'
+import { ScreenHeader } from '@/src/components/ui'
 
 export default function Watch({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -41,18 +42,16 @@ export default function Watch({ params }: { params: Promise<{ id: string }> }) {
     return () => { if (channel) supabase.removeChannel(channel) }
   }, [id])
 
-  if (!outing) return <main className="p-6">Loading…</main>
+  if (!outing) return <main className="p-6 text-sage">Loading…</main>
 
   return (
-    <main className="mx-auto flex max-w-sm flex-col gap-4 p-6">
-      <h1 className="text-2xl font-bold">Leaderboard</h1>
-      <p className="text-sm text-gray-500">
-        Live scoring arrives in Phase 1 — here’s who’s playing:
-      </p>
+    <main className="mx-auto flex max-w-sm flex-col gap-5 p-6">
+      <ScreenHeader title="Leaderboard" meta="The field" />
+      <p className="text-sm text-sage">Live scoring lands next — here’s who’s playing:</p>
       {groups.map((g) => (
-        <div key={g.id} className="rounded-lg border p-3">
-          <p className="font-semibold">{g.name}</p>
-          <p className="text-sm text-gray-600">
+        <div key={g.id} className="rounded-xl border border-parch-2 bg-cream p-4">
+          <p className="font-serif text-ink">{g.name}</p>
+          <p className="mt-0.5 text-sm text-sage">
             {players.filter((p) => p.group_id === g.id).map((p) => p.display_name).join(', ')}
           </p>
         </div>

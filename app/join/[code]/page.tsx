@@ -19,21 +19,27 @@ export default function Join({ params }: { params: Promise<{ code: string }> }) 
     load()
   }, [code])
 
-  if (notFound) return <main className="p-6 text-center">No outing found for code {code}.</main>
-  if (!outing) return <main className="p-6">Loading…</main>
+  if (notFound) return <main className="p-6 text-center text-sage">No outing found for code {code}.</main>
+  if (!outing) return <main className="p-6 text-sage">Loading…</main>
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-4 p-6">
-      <h1 className="text-center text-2xl font-bold">You’re invited ⛳</h1>
+    <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-5 p-6">
+      <div className="text-center">
+        <div className="font-serif text-sm uppercase tracking-[0.42em] text-pine">Outter</div>
+        <div className="mx-auto mt-3 h-0.5 w-12 bg-gold" />
+        <h1 className="mt-5 font-serif text-3xl text-ink">You’re invited</h1>
+        <p className="mt-2 text-sm text-sage">Keep the card for your group, or just follow along.</p>
+      </div>
+
       <Link
         href={`/join/${code}/keep-score`}
-        className="rounded-xl bg-green-700 py-4 text-center text-lg font-semibold text-white"
+        className="rounded-[13px] bg-pine py-4 text-center text-lg font-medium text-cream active:scale-[0.98]"
       >
         Keep score for my group
       </Link>
       <Link
         href={`/outing/${outing.id}/watch`}
-        className="rounded-xl border py-4 text-center text-lg font-semibold"
+        className="rounded-[13px] border-[1.5px] border-pine py-4 text-center text-lg font-medium text-pine active:scale-[0.98]"
       >
         Just watch
       </Link>

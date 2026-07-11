@@ -3,6 +3,11 @@ import { use, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase, ensureSession } from '@/src/lib/supabase'
 import type { Outing } from '@/src/lib/types'
+import { Button, ScreenHeader } from '@/src/components/ui'
+
+const label = 'text-xs font-medium uppercase tracking-[0.14em] text-sage'
+const field =
+  'rounded-[13px] border border-parch-2 bg-cream px-4 py-3 text-ink outline-none focus:border-gold'
 
 export default function KeepScore({ params }: { params: Promise<{ code: string }> }) {
   const { code } = use(params)
@@ -46,69 +51,68 @@ export default function KeepScore({ params }: { params: Promise<{ code: string }
     }
   }
 
-  if (!outing) return <main className="p-6">Loading…</main>
+  if (!outing) return <main className="p-6 text-sage">Loading…</main>
 
   return (
-    <main className="mx-auto flex max-w-sm flex-col gap-4 p-6">
-      <h1 className="text-2xl font-bold">Your group</h1>
-      <label className="flex flex-col gap-1">
-        <span className="text-sm font-medium">Group name (optional)</span>
+    <main className="mx-auto flex max-w-sm flex-col gap-5 p-6">
+      <ScreenHeader title="Your group" meta="Who's in your cart?" />
+
+      <label className="flex flex-col gap-1.5">
+        <span className={label}>Group name (optional)</span>
         <input
           value={groupName}
           onChange={(e) => setGroupName(e.target.value)}
           placeholder="e.g. The Hackers"
-          className="rounded-lg border px-3 py-2"
+          className={`${field} font-serif text-lg placeholder:text-sage/40`}
         />
       </label>
 
-      <span className="text-sm font-medium">Players</span>
-      {names.map((n, i) => (
-        <div key={i} className="flex gap-2">
-          <input
-            value={n}
-            onChange={(e) => {
-              const next = [...names]
-              next[i] = e.target.value
-              setNames(next)
-            }}
-            placeholder={`Player ${i + 1}`}
-            className="w-full rounded-lg border px-3 py-2"
-          />
-          {withHandicaps && (
+      <div className="flex flex-col gap-2">
+        <span className={label}>Players</span>
+        {names.map((n, i) => (
+          <div key={i} className="flex gap-2">
             <input
-              value={handicaps[i]}
+              value={n}
               onChange={(e) => {
-                const next = [...handicaps]
+                const next = [...names]
                 next[i] = e.target.value
-                setHandicaps(next)
+                setNames(next)
               }}
-              placeholder="HCP"
-              inputMode="decimal"
-              className="w-20 rounded-lg border px-2 py-2 text-center"
+              placeholder={`Player ${i + 1}`}
+              className={`${field} w-full`}
             />
-          )}
-        </div>
-      ))}
-      {names.length < 6 && (
-        <button
-          onClick={() => {
-            setNames([...names, ''])
-            setHandicaps([...handicaps, ''])
-          }}
-          className="self-start text-sm font-semibold text-green-700"
-        >
-          + Add player
-        </button>
-      )}
+            {withHandicaps && (
+              <input
+                value={handicaps[i]}
+                onChange={(e) => {
+                  const next = [...handicaps]
+                  next[i] = e.target.value
+                  setHandicaps(next)
+                }}
+                placeholder="HCP"
+                inputMode="decimal"
+                className="tnum w-20 rounded-[13px] border border-parch-2 border-b-2 border-b-gold bg-cream px-2 py-3 text-center font-serif text-lg text-pine outline-none focus:border-b-pine"
+              />
+            )}
+          </div>
+        ))}
+        {names.length < 6 && (
+          <button
+            onClick={() => {
+              setNames([...names, ''])
+              setHandicaps([...handicaps, ''])
+            }}
+            className="self-start text-sm font-medium text-pine"
+          >
+            + Add player
+          </button>
+        )}
+      </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      <button
-        onClick={submit}
-        disabled={busy || validNames.length === 0}
-        className="rounded-xl bg-green-700 py-3 text-lg font-semibold text-white disabled:opacity-40"
-      >
+      {error && <p className="text-sm text-board-red">{error}</p>}
+      <Button onClick={submit} disabled={busy || validNames.length === 0} className="text-lg">
         {busy ? 'Joining…' : "We're in"}
-      </button>
+      </Button>
     </main>
   )
 }
