@@ -348,7 +348,7 @@ export function computeStrokeLeaderboard(input: LeaderboardInput): LeaderboardRo
   const holes = par.length
 
   const rows: Internal[] = players.map((p) => {
-    const mine = scores.filter((s) => s.playerId === p.playerId)
+    const mine = scores.filter((s) => s.playerId === p.id)
     const byHole = new Map(mine.map((s) => [s.holeNumber, s.strokes]))
     const playedHoles = [...byHole.keys()].sort((a, b) => a - b)
     const thru = playedHoles.length
@@ -374,7 +374,7 @@ export function computeStrokeLeaderboard(input: LeaderboardInput): LeaderboardRo
 
     const value = useNet && net != null ? net : gross
     return {
-      playerId: p.playerId,
+      playerId: p.id,
       displayName: p.displayName,
       groupName: p.groupName,
       thru,
