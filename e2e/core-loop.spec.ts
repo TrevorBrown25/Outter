@@ -8,7 +8,7 @@ test('create outing → scorekeeper joins → group appears live in lobby', asyn
   await orgPage.getByRole('button', { name: '9 holes' }).click()
   await orgPage.getByRole('button', { name: 'Create outing' }).click()
   await orgPage.waitForURL(/\/outing\/.+\/lobby/)
-  const shareCode = (await orgPage.locator('p.font-mono').textContent())!.trim()
+  const shareCode = (await orgPage.getByTestId('share-code').textContent())!.trim()
   expect(shareCode).toMatch(/^[A-Z2-9]{6}$/)
 
   const scorekeeper = await browser.newContext()
