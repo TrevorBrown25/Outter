@@ -44,7 +44,7 @@ export default function KeepScore({ params }: { params: Promise<{ code: string }
           : null,
       })
       if (gErr) throw gErr
-      router.push(`/outing/${outing!.id}/watch`)
+      router.push(`/outing/${outing!.id}/score`)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong')
       setBusy(false)

@@ -19,7 +19,7 @@ test('create outing → scorekeeper joins → group appears live in lobby', asyn
   await skPage.getByPlaceholder('Player 1').fill('Alice')
   await skPage.getByPlaceholder('Player 2').fill('Bob')
   await skPage.getByRole('button', { name: /We.re in/ }).click()
-  await skPage.waitForURL(/\/outing\/.+\/watch/)
+  await skPage.waitForURL(/\/outing\/.+\/score/)
 
   await expect(orgPage.getByText('The Hackers')).toBeVisible({ timeout: 15_000 })
   await expect(orgPage.getByText('Alice, Bob')).toBeVisible()
