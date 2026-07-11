@@ -24,6 +24,20 @@ test('create outing → scorekeeper joins → group appears live in lobby', asyn
   await expect(orgPage.getByText('The Hackers')).toBeVisible({ timeout: 15_000 })
   await expect(orgPage.getByText('Alice, Bob')).toBeVisible()
 
+  // scoring: open a spectator on the leaderboard BEFORE any score, to prove realtime delivery
+  const outingId = await skPage.evaluate(() => location.pathname.split('/')[2])
+  const spectator = await browser.newContext()
+  const specPage = await spectator.newPage()
+  await specPage.goto(`/outing/${outingId}/watch`)
+  await expect(specPage.getByRole('heading', { name: 'Leaderboard' })).toBeVisible()
+
+  // scorekeeper enters an over-par score on hole 1 for the first player (par 4 -> 5 = +1)
+  await skPage.getByRole('button', { name: /one more for/ }).first().click()
+
+  // the spectator's leaderboard reflects it live
+  await expect(specPage.getByText('+1')).toBeVisible({ timeout: 20_000 })
+
+  await spectator.close()
   await organizer.close()
   await scorekeeper.close()
 })
