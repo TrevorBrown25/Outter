@@ -3,6 +3,11 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase, ensureSession } from '@/src/lib/supabase'
 import type { HandicapMode, Outing, OutingFormat } from '@/src/lib/types'
+import { Button, ScreenHeader } from '@/src/components/ui'
+
+const label = 'text-xs font-medium uppercase tracking-[0.14em] text-sage'
+const field =
+  'rounded-[13px] border border-parch-2 bg-cream px-4 py-3 text-ink outline-none focus:border-gold'
 
 export default function CreateOuting() {
   const router = useRouter()
@@ -50,35 +55,41 @@ export default function CreateOuting() {
   }
 
   return (
-    <main className="mx-auto flex max-w-sm flex-col gap-4 p-6">
-      <h1 className="text-2xl font-bold">New outing</h1>
+    <main className="mx-auto flex max-w-sm flex-col gap-6 p-6">
+      <ScreenHeader title="New outing" meta="Set up the round" />
 
-      <label className="flex flex-col gap-1">
-        <span className="text-sm font-medium">Course name</span>
+      <label className="flex flex-col gap-1.5">
+        <span className={label}>Course name</span>
         <input
           value={courseName}
           onChange={(e) => setCourseName(e.target.value)}
-          className="rounded-lg border px-3 py-2"
+          placeholder="The Pines"
+          className={`${field} font-serif text-lg placeholder:text-sage/40`}
         />
       </label>
 
-      <div className="flex gap-2">
-        {([9, 18] as const).map((n) => (
-          <button
-            key={n}
-            onClick={() => setNumHoles(n)}
-            className={`flex-1 rounded-lg border py-2 font-semibold ${numHoles === n ? 'bg-green-700 text-white' : ''}`}
-          >
-            {n} holes
-          </button>
-        ))}
+      <div className="flex flex-col gap-1.5">
+        <span className={label}>Holes</span>
+        <div className="flex gap-2">
+          {([18, 9] as const).map((n) => (
+            <button
+              key={n}
+              onClick={() => setNumHoles(n)}
+              className={`flex-1 rounded-[13px] border-[1.5px] py-3 font-medium transition-colors ${
+                numHoles === n ? 'border-pine bg-pine text-cream' : 'border-parch-2 bg-cream text-sage'
+              }`}
+            >
+              {n} holes
+            </button>
+          ))}
+        </div>
       </div>
 
-      <fieldset>
-        <legend className="text-sm font-medium">Par per hole</legend>
-        <div className="grid grid-cols-6 gap-1">
+      <fieldset className="flex flex-col gap-2">
+        <legend className={`${label} mb-1`}>Par per hole</legend>
+        <div className="grid grid-cols-6 gap-2">
           {pars.slice(0, numHoles).map((p, i) => (
-            <label key={i} className="flex flex-col items-center text-xs">
+            <label key={i} className="flex flex-col items-center gap-1 text-[10px] font-medium text-sage">
               {i + 1}
               <input
                 type="number"
@@ -90,46 +101,42 @@ export default function CreateOuting() {
                   next[i] = Number(e.target.value)
                   setPars(next)
                 }}
-                className="w-full rounded border px-1 py-1 text-center"
+                className="tnum w-full rounded-t-md border border-parch-2 border-b-2 border-b-gold bg-cream px-1 py-2 text-center font-serif text-lg text-pine outline-none focus:border-b-pine"
               />
             </label>
           ))}
         </div>
       </fieldset>
 
-      <label className="flex flex-col gap-1">
-        <span className="text-sm font-medium">Date</span>
-        <input
-          type="date"
-          value={playDate}
-          onChange={(e) => setPlayDate(e.target.value)}
-          className="rounded-lg border px-3 py-2"
-        />
+      <label className="flex flex-col gap-1.5">
+        <span className={label}>Date</span>
+        <input type="date" value={playDate} onChange={(e) => setPlayDate(e.target.value)} className={field} />
       </label>
 
-      <label className="flex flex-col gap-1">
-        <span className="text-sm font-medium">Format</span>
-        <select
-          value={format}
-          onChange={(e) => setFormat(e.target.value as OutingFormat)}
-          className="rounded-lg border px-3 py-2"
-        >
+      <label className="flex flex-col gap-1.5">
+        <span className={label}>Format</span>
+        <select value={format} onChange={(e) => setFormat(e.target.value as OutingFormat)} className={field}>
           <option value="stroke">Stroke play</option>
           <option value="scramble">Scramble</option>
         </select>
       </label>
 
-      <label className="flex items-center gap-2">
-        <input type="checkbox" checked={skins} onChange={(e) => setSkins(e.target.checked)} />
-        <span>Skins side game</span>
+      <label className="flex items-center justify-between rounded-[13px] border border-parch-2 bg-cream px-4 py-3">
+        <span className="font-serif text-ink">Skins side game</span>
+        <input
+          type="checkbox"
+          checked={skins}
+          onChange={(e) => setSkins(e.target.checked)}
+          className="h-5 w-5 accent-pine"
+        />
       </label>
 
-      <label className="flex flex-col gap-1">
-        <span className="text-sm font-medium">Handicaps</span>
+      <label className="flex flex-col gap-1.5">
+        <span className={label}>Handicaps</span>
         <select
           value={handicapMode}
           onChange={(e) => setHandicapMode(e.target.value as HandicapMode)}
-          className="rounded-lg border px-3 py-2"
+          className={field}
         >
           <option value="none">None (gross)</option>
           <option value="manual">Manual entry</option>
@@ -137,14 +144,10 @@ export default function CreateOuting() {
         </select>
       </label>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      <button
-        onClick={submit}
-        disabled={busy || !courseName.trim()}
-        className="rounded-xl bg-green-700 py-3 text-lg font-semibold text-white disabled:opacity-40"
-      >
+      {error && <p className="text-sm text-board-red">{error}</p>}
+      <Button onClick={submit} disabled={busy || !courseName.trim()} className="text-lg">
         {busy ? 'Creating…' : 'Create outing'}
-      </button>
+      </Button>
     </main>
   )
 }
