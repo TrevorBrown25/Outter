@@ -1,5 +1,6 @@
 'use client'
 import { use, useEffect, useState } from 'react'
+import Link from 'next/link'
 import { QRCodeSVG } from 'qrcode.react'
 import { supabase, ensureSession } from '@/src/lib/supabase'
 import type { Group, Outing, Player } from '@/src/lib/types'
@@ -11,6 +12,7 @@ export default function Lobby({ params }: { params: Promise<{ id: string }> }) {
   const [groups, setGroups] = useState<Group[]>([])
   const [players, setPlayers] = useState<Player[]>([])
   const [joinUrl, setJoinUrl] = useState('')
+  const [uid, setUid] = useState<string | null>(null)
 
   useEffect(() => {
     let channel: ReturnType<typeof supabase.channel> | null = null
@@ -25,7 +27,8 @@ export default function Lobby({ params }: { params: Promise<{ id: string }> }) {
     }
 
     async function load() {
-      await ensureSession()
+      const session = await ensureSession()
+      setUid(session.user.id)
       const { data: o } = await supabase.from('outings').select().eq('id', id).single()
       setOuting(o)
       if (o) setJoinUrl(`${window.location.origin}/join/${o.share_code}`)
@@ -81,6 +84,24 @@ export default function Lobby({ params }: { params: Promise<{ id: string }> }) {
           </div>
         ))}
       </section>
+
+      {outing.organizer_id === uid && outing.status === 'setup' && (
+        <button
+          onClick={async () => {
+            await supabase.from('outings').update({ status: 'live' }).eq('id', outing.id)
+            window.location.href = `/outing/${outing.id}/watch`
+          }}
+          disabled={groups.length === 0}
+          className="rounded-[13px] bg-pine py-4 text-center text-lg font-medium text-cream active:scale-[0.98] disabled:opacity-40"
+        >
+          Start round
+        </button>
+      )}
+      {outing.status !== 'setup' && (
+        <Link href={`/outing/${outing.id}/watch`} className="text-center text-sm font-medium text-pine">
+          Round in progress — view leaderboard
+        </Link>
+      )}
     </main>
   )
 }
