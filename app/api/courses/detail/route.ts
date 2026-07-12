@@ -18,7 +18,8 @@ export async function GET(req: NextRequest) {
   })
   if (!res.ok) return NextResponse.json({ error: 'course_fetch_failed' }, { status: 502 })
 
-  const c = await res.json()
+  const body = await res.json()
+  const c = body.course ?? body // detail wraps the payload in a "course" key
   const tees: {
     name: string
     gender: 'male' | 'female'
