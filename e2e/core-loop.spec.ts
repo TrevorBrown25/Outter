@@ -4,6 +4,7 @@ test('create outing → scorekeeper joins → group appears live in lobby', asyn
   const organizer = await browser.newContext()
   const orgPage = await organizer.newPage()
   await orgPage.goto('/create')
+  await orgPage.getByRole('button', { name: 'Enter manually' }).click()
   await orgPage.getByLabel('Course name').fill('E2E Links')
   await orgPage.getByRole('button', { name: '9 holes' }).click()
   await orgPage.getByRole('button', { name: 'Create outing' }).click()
